@@ -1,40 +1,25 @@
-# Foundry Club – frontend
+# Foundry Club
 
-Production-style frontend for a university entrepreneurship and technology club with two divisions
-(Incubator: idea to product; Agency: paid client work) and a shared core team.
+React 18 + TypeScript + Vite frontend, Express 5 API, and PostgreSQL database, compatible with Supabase PostgreSQL. The dashboard is restricted to club administrators. Public visitors can submit ideas, project requests, messages, and membership applications.
 
-**Stack:** React 18, TypeScript (strict), Vite, Tailwind CSS, React Router, Framer Motion, Recharts, Lucide.
+## Local setup
 
-## Run it
+1. Run `npm ci` and copy `.env.example` to `.env`.
+2. Set `DATABASE_URL`, `ADMIN_EMAIL`, and a unique `ADMIN_PASSWORD` (12+ characters).
+3. For a local database, set `POSTGRES_PASSWORD` and run `docker compose up -d`. Match that password in `DATABASE_URL`.
+4. Run `npm run db:setup` to apply the migration and create the first administrator. Remove `ADMIN_PASSWORD` afterward.
+5. Run `npm run dev`; open http://localhost:5173 and sign in at `/dashboard`.
+
+Database migrations are repeatable. No mock records are automatically imported: your live database starts empty. The fixtures in `src/data` are retained for reference, but operational services and public counters now call the API.
+
+## Validation
 
 ```bash
-npm install
-npm run dev        # http://localhost:5173
-npm run build      # type-check + production build
-npm run preview
+npm run test:api
+npm run typecheck:api
+npm run build
 ```
 
-> Note: this project was written in an environment without npm access, so `npm install` and
-> `npm run build` have **not** been run yet. If the build reports a type error, it is a small fix.
+Integration tests run the Express application against PGlite, an embedded PostgreSQL engine, and verify persistence, authentication, role checks, input validation, origin checks, finance totals, settings, report export, and reference integrity. An additional disk-backed test closes and reopens the database. Hosted deployment still requires a configured database and environment variables.
 
-## Structure
-
-```
-src/
-  components/   common/ (UI kit), dashboard/ (charts, kanban), layout/ (shells, nav)
-  data/         mock data: projects, members, ideas, clients, startups, analytics, finance, operations
-  hooks/        useAsync, useForm, useToast, useTheme, ...
-  lib/          api.ts (mock + REST seam), utils.ts
-  pages/        public/ (10 pages + 404), dashboard/ (17 pages)
-  services/     one module per domain; the only place that touches data
-  types/        shared domain types
-```
-
-Public routes: `/`, `/about`, `/incubator`, `/agency`, `/projects`, `/startups`, `/team`,
-`/collaborations`, `/contact`, `/join`. Dashboard lives under `/dashboard/*`, lazy-loaded.
-`Ctrl/Cmd+K` opens the command palette.
-
-## Connecting a real backend
-
-Services call `mockRequest(data)` from `src/lib/api.ts`. Set `VITE_API_URL` in `.env` and replace
-each call with `http<T>('/ideas')` etc. Components never import mock data directly, so nothing else changes.
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for Supabase and hosting setup.

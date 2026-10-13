@@ -1,18 +1,18 @@
-import { projects } from '@/data/projects';
-import { mockRequest } from '@/lib/api';
-import type { Project } from '@/types';
-
+import { http } from "@/lib/api";
+import type { Project } from "@/types";
 export const projectService = {
-  list(): Promise<Project[]> {
-    return mockRequest(projects);
+  list: () =>
+    http<Project[]>(
+      window.location.pathname.startsWith("/dashboard")
+        ? "/projects"
+        : "/public/projects",
+    ),
+  async featured(limit = 3) {
+    return (await this.list())
+      .filter((p) => p.status === "Active")
+      .slice(0, limit);
   },
-
-  async featured(limit = 3): Promise<Project[]> {
-    const picked = projects.filter((p) => p.status === 'Active').slice(0, limit);
-    return mockRequest(picked, 350);
-  },
-
-  async get(id: string): Promise<Project | undefined> {
-    return mockRequest(projects.find((p) => p.id === id), 250);
+  async get(id: string) {
+    return (await this.list()).find((p) => p.id === id);
   },
 };

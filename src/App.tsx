@@ -1,41 +1,47 @@
-import { lazy, Suspense } from 'react';
-import { Route, Routes } from 'react-router-dom';
-import { ScrollToTop } from '@/components/layout/ScrollToTop';
-import PublicLayout from '@/components/layout/PublicLayout';
-import DashboardLayout from '@/components/layout/DashboardLayout';
-import Home from '@/pages/public/Home';
-import About from '@/pages/public/About';
-import Incubator from '@/pages/public/Incubator';
-import Agency from '@/pages/public/Agency';
-import Projects from '@/pages/public/Projects';
-import Startups from '@/pages/public/Startups';
-import Team from '@/pages/public/Team';
-import Collaborations from '@/pages/public/Collaborations';
-import Contact from '@/pages/public/Contact';
-import Join from '@/pages/public/Join';
-import NotFound from '@/pages/public/NotFound';
+import { DashboardAuth } from "@/components/layout/DashboardAuth";
+import { lazy, Suspense } from "react";
+import { Route, Routes } from "react-router-dom";
+import { ScrollToTop } from "@/components/layout/ScrollToTop";
+import PublicLayout from "@/components/layout/PublicLayout";
+import DashboardLayout from "@/components/layout/DashboardLayout";
+import Home from "@/pages/public/Home";
+import About from "@/pages/public/About";
+import Incubator from "@/pages/public/Incubator";
+import Agency from "@/pages/public/Agency";
+import Projects from "@/pages/public/Projects";
+import Startups from "@/pages/public/Startups";
+import Team from "@/pages/public/Team";
+import Collaborations from "@/pages/public/Collaborations";
+import Contact from "@/pages/public/Contact";
+import Join from "@/pages/public/Join";
+import NotFound from "@/pages/public/NotFound";
 
-const Overview = lazy(() => import('@/pages/dashboard/Overview'));
-const Ideas = lazy(() => import('@/pages/dashboard/Ideas'));
-const Validation = lazy(() => import('@/pages/dashboard/Validation'));
-const Mvps = lazy(() => import('@/pages/dashboard/Mvps'));
-const StartupsAdmin = lazy(() => import('@/pages/dashboard/StartupsAdmin'));
-const Leads = lazy(() => import('@/pages/dashboard/Leads'));
-const Clients = lazy(() => import('@/pages/dashboard/Clients'));
-const AgencyProjects = lazy(() => import('@/pages/dashboard/AgencyProjects'));
-const Deliveries = lazy(() => import('@/pages/dashboard/Deliveries'));
-const Members = lazy(() => import('@/pages/dashboard/Members'));
-const Tasks = lazy(() => import('@/pages/dashboard/Tasks'));
-const CollaborationsAdmin = lazy(() => import('@/pages/dashboard/CollaborationsAdmin'));
-const Revenue = lazy(() => import('@/pages/dashboard/Revenue'));
-const Invoices = lazy(() => import('@/pages/dashboard/Invoices'));
-const Payouts = lazy(() => import('@/pages/dashboard/Payouts'));
-const Reports = lazy(() => import('@/pages/dashboard/Reports'));
-const Settings = lazy(() => import('@/pages/dashboard/Settings'));
+const Overview = lazy(() => import("@/pages/dashboard/Overview"));
+const Ideas = lazy(() => import("@/pages/dashboard/Ideas"));
+const Validation = lazy(() => import("@/pages/dashboard/Validation"));
+const Mvps = lazy(() => import("@/pages/dashboard/Mvps"));
+const StartupsAdmin = lazy(() => import("@/pages/dashboard/StartupsAdmin"));
+const Leads = lazy(() => import("@/pages/dashboard/Leads"));
+const Clients = lazy(() => import("@/pages/dashboard/Clients"));
+const AgencyProjects = lazy(() => import("@/pages/dashboard/AgencyProjects"));
+const Deliveries = lazy(() => import("@/pages/dashboard/Deliveries"));
+const Members = lazy(() => import("@/pages/dashboard/Members"));
+const Tasks = lazy(() => import("@/pages/dashboard/Tasks"));
+const CollaborationsAdmin = lazy(
+  () => import("@/pages/dashboard/CollaborationsAdmin"),
+);
+const Revenue = lazy(() => import("@/pages/dashboard/Revenue"));
+const Invoices = lazy(() => import("@/pages/dashboard/Invoices"));
+const Payouts = lazy(() => import("@/pages/dashboard/Payouts"));
+const Reports = lazy(() => import("@/pages/dashboard/Reports"));
+const Settings = lazy(() => import("@/pages/dashboard/Settings"));
 
 function PageLoading() {
   return (
-    <div className="flex h-64 items-center justify-center text-sm text-muted" role="status">
+    <div
+      className="flex h-64 items-center justify-center text-sm text-muted"
+      role="status"
+    >
       Loading…
     </div>
   );
@@ -60,7 +66,14 @@ export default function App() {
             <Route path="join" element={<Join />} />
           </Route>
 
-          <Route path="dashboard" element={<DashboardLayout />}>
+          <Route
+            path="dashboard"
+            element={
+              <DashboardAuth>
+                <DashboardLayout />
+              </DashboardAuth>
+            }
+          >
             <Route index element={<Overview />} />
             <Route path="incubator/ideas" element={<Ideas />} />
             <Route path="incubator/validation" element={<Validation />} />

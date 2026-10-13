@@ -1,13 +1,14 @@
-import { useRef } from 'react';
-import { useInView } from 'framer-motion';
-import { impact } from '@/data/analytics';
-import type { ImpactStat } from '@/data/analytics';
-import { useCountUp } from '@/hooks/useCountUp';
-import { SectionHeader } from '@/components/common/SectionHeader';
+import { useRef } from "react";
+import { useInView } from "framer-motion";
+import { useAsync } from "@/hooks/useAsync";
+import { http } from "@/lib/api";
+import type { ImpactStat } from "@/data/analytics";
+import { useCountUp } from "@/hooks/useCountUp";
+import { SectionHeader } from "@/components/common/SectionHeader";
 
 function Counter({ stat }: { stat: ImpactStat }) {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-60px' });
+  const inView = useInView(ref, { once: true, margin: "-60px" });
   const value = useCountUp(stat.value, inView);
 
   return (
@@ -22,11 +23,21 @@ function Counter({ stat }: { stat: ImpactStat }) {
 }
 
 export function ImpactNumbers() {
+  const {
+    data: impact,
+    error,
+    loading,
+  } = useAsync(() => http<ImpactStat[]>("/public/impact"), []);
   return (
     <section className="container-x py-20 sm:py-28">
-      <SectionHeader eyebrow="Impact" title="Numbers from the last four years" align="center" />
+      <SectionHeader eyebrow="Impact" title="Our progress" align="center" />
+      {(loading || error) && (
+        <p className="mt-6 text-center text-muted">
+          {loading ? "Loading progress…" : "Progress is currently unavailable."}
+        </p>
+      )}
       <div className="mt-12 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line lg:grid-cols-3">
-        {impact.map((s) => (
+        {(impact ?? []).map((s) => (
           <Counter key={s.id} stat={s} />
         ))}
       </div>

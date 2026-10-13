@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import type { DragEvent, ReactNode } from 'react';
-import { GripVertical } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { useState } from "react";
+import type { DragEvent, ReactNode } from "react";
+import { GripVertical } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export interface KanbanColumn {
   id: string;
@@ -29,14 +29,14 @@ export function KanbanBoard<T extends { id: string }>({
   getTitle,
   onMove,
   renderCard,
-  columnWidth = 'w-72',
+  columnWidth = "w-72",
 }: KanbanBoardProps<T>) {
   const [dragId, setDragId] = useState<string | null>(null);
   const [overColumn, setOverColumn] = useState<string | null>(null);
 
-  const handleDrop = (e: DragEvent<HTMLDivElement>, columnId: string) => {
+  const handleDrop = (e: DragEvent<HTMLElement>, columnId: string) => {
     e.preventDefault();
-    const id = e.dataTransfer.getData('text/plain') || dragId;
+    const id = e.dataTransfer.getData("text/plain") || dragId;
     const item = items.find((i) => i.id === id);
     if (item && getColumn(item) !== columnId) onMove(item, columnId);
     setDragId(null);
@@ -53,9 +53,9 @@ export function KanbanBoard<T extends { id: string }>({
             key={col.id}
             aria-label={col.title}
             className={cn(
-              'flex max-h-[70vh] shrink-0 flex-col rounded-2xl border bg-surface2/50 transition-colors',
+              "flex max-h-[70vh] shrink-0 flex-col rounded-2xl border bg-surface2/50 transition-colors",
               columnWidth,
-              isOver ? 'border-accent bg-accent/5' : 'border-line',
+              isOver ? "border-accent bg-accent/5" : "border-line",
             )}
             onDragOver={(e) => {
               e.preventDefault();
@@ -66,7 +66,9 @@ export function KanbanBoard<T extends { id: string }>({
           >
             <header className="flex items-center justify-between px-3.5 py-3">
               <h3 className="text-sm font-semibold">{col.title}</h3>
-              <span className="rounded-md bg-surface px-1.5 font-mono text-[11px] text-muted">{colItems.length}</span>
+              <span className="rounded-md bg-surface px-1.5 font-mono text-[11px] text-muted">
+                {colItems.length}
+              </span>
             </header>
             <div className="flex-1 space-y-2.5 overflow-y-auto px-2.5 pb-2.5">
               {colItems.length === 0 && (
@@ -79,8 +81,8 @@ export function KanbanBoard<T extends { id: string }>({
                   key={item.id}
                   draggable
                   onDragStart={(e) => {
-                    e.dataTransfer.setData('text/plain', item.id);
-                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData("text/plain", item.id);
+                    e.dataTransfer.effectAllowed = "move";
                     setDragId(item.id);
                   }}
                   onDragEnd={() => {
@@ -88,12 +90,15 @@ export function KanbanBoard<T extends { id: string }>({
                     setOverColumn(null);
                   }}
                   className={cn(
-                    'cursor-grab rounded-xl border border-line bg-surface p-3 text-sm shadow-sm active:cursor-grabbing',
-                    dragId === item.id && 'opacity-40',
+                    "cursor-grab rounded-xl border border-line bg-surface p-3 text-sm shadow-sm active:cursor-grabbing",
+                    dragId === item.id && "opacity-40",
                   )}
                 >
                   <div className="flex items-start gap-2">
-                    <GripVertical className="mt-0.5 h-4 w-4 shrink-0 text-muted" aria-hidden />
+                    <GripVertical
+                      className="mt-0.5 h-4 w-4 shrink-0 text-muted"
+                      aria-hidden
+                    />
                     <div className="min-w-0 flex-1">{renderCard(item)}</div>
                   </div>
                   <select

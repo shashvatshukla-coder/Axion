@@ -1,19 +1,21 @@
-import { useState } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
-import { Menu, Search } from 'lucide-react';
-import { Sidebar } from '@/components/layout/Sidebar';
-import { NotificationsMenu } from '@/components/layout/NotificationsMenu';
-import { PageTransition } from '@/components/layout/PageTransition';
-import { dashboardLinks } from '@/components/layout/navConfig';
-import { ThemeToggle } from '@/components/common/ThemeToggle';
-import { Avatar } from '@/components/common/Avatar';
-import { useCommandPalette } from '@/components/common/SearchCommand';
+import { useState } from "react";
+import { Outlet, useLocation } from "react-router-dom";
+import { Menu, Search } from "lucide-react";
+import { Sidebar } from "@/components/layout/Sidebar";
+import { NotificationsMenu } from "@/components/layout/NotificationsMenu";
+import { PageTransition } from "@/components/layout/PageTransition";
+import { dashboardLinks } from "@/components/layout/navConfig";
+import { ThemeToggle } from "@/components/common/ThemeToggle";
+import { Avatar } from "@/components/common/Avatar";
+import { useCommandPalette } from "@/components/common/SearchCommand";
 
 export default function DashboardLayout() {
   const [navOpen, setNavOpen] = useState(false);
   const { pathname } = useLocation();
   const palette = useCommandPalette();
-  const current = dashboardLinks.find((l) => (l.end ? pathname === l.to : pathname.startsWith(l.to)));
+  const current = dashboardLinks.find((l) =>
+    l.end ? pathname === l.to : pathname.startsWith(l.to),
+  );
 
   return (
     <div className="min-h-screen bg-bg">
@@ -29,7 +31,7 @@ export default function DashboardLayout() {
           </button>
           <p className="text-sm text-muted">
             Dashboard
-            {current && current.to !== '/dashboard' && (
+            {current && current.to !== "/dashboard" && (
               <>
                 <span className="mx-2 text-line">/</span>
                 <span className="font-medium text-fg">{current.label}</span>
@@ -44,7 +46,9 @@ export default function DashboardLayout() {
             >
               <Search className="h-4 w-4" aria-hidden />
               Search
-              <kbd className="rounded-md border border-line px-1.5 font-mono text-[10px]">Ctrl K</kbd>
+              <kbd className="rounded-md border border-line px-1.5 font-mono text-[10px]">
+                Ctrl K
+              </kbd>
             </button>
             <button
               onClick={palette.open}
@@ -55,7 +59,7 @@ export default function DashboardLayout() {
             </button>
             <NotificationsMenu />
             <ThemeToggle />
-            <Avatar name="Kabir Nair" size="sm" />
+            <Avatar name="Club Admin" size="sm" />
           </div>
         </header>
         <main className="p-4 sm:p-6 lg:p-8">

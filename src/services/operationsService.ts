@@ -1,24 +1,9 @@
-import { collaborations, notifications, tasks as seedTasks } from '@/data/operations';
-import { mockRequest } from '@/lib/api';
-import type { AppNotification, Collaboration, Task, TaskStatus } from '@/types';
-
-let taskStore: Task[] = seedTasks.map((t) => ({ ...t }));
-
+import { http, patch } from "@/lib/api";
+import type { AppNotification, Collaboration, Task, TaskStatus } from "@/types";
 export const operationsService = {
-  tasks(): Promise<Task[]> {
-    return mockRequest(taskStore);
-  },
-
-  async moveTask(id: string, status: TaskStatus): Promise<Task> {
-    taskStore = taskStore.map((t) => (t.id === id ? { ...t, status } : t));
-    return mockRequest(taskStore.find((t) => t.id === id) as Task, 200);
-  },
-
-  collaborations(): Promise<Collaboration[]> {
-    return mockRequest(collaborations);
-  },
-
-  notifications(): Promise<AppNotification[]> {
-    return mockRequest(notifications, 300);
-  },
+  tasks: () => http<Task[]>("/tasks"),
+  moveTask: (id: string, status: TaskStatus) =>
+    patch<Task>(`/tasks/${encodeURIComponent(id)}`, { status }),
+  collaborations: () => http<Collaboration[]>("/public/collaborations"),
+  notifications: () => http<AppNotification[]>("/notifications"),
 };

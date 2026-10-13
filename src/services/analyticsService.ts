@@ -5,8 +5,8 @@ import {
   memberActivity,
   projectsByMonth,
   revenueByMonth,
-} from '@/data/analytics';
-import { mockRequest } from '@/lib/api';
+} from "@/data/analytics";
+import { http } from "@/lib/api";
 
 export interface AnalyticsBundle {
   stats: typeof dashboardStats;
@@ -19,9 +19,6 @@ export interface AnalyticsBundle {
 
 export const analyticsService = {
   overview(): Promise<AnalyticsBundle> {
-    return mockRequest(
-      { stats: dashboardStats, projectsByMonth, incubatorFunnel, agencyPipeline, revenueByMonth, memberActivity },
-      700,
-    );
+    return http<AnalyticsBundle>("/analytics");
   },
 };
