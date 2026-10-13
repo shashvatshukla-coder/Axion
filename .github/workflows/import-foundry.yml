@@ -1,0 +1,45 @@
+name: Import Foundry Club codebase
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    if: ${{ github.event.head_commit.message == 'Upload Foundry Club source archive' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Decode and extract source archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          base64 -d foundry-club-completed.zip.b64 > /tmp/foundry-club.zip
+          rm -rf /tmp/foundry-import
+          mkdir -p /tmp/foundry-import
+          unzip -q /tmp/foundry-club.zip -d /tmp/foundry-import
+          rsync -a --delete \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='foundry-club-completed.zip.b64' \
+            /tmp/foundry-import/foundry-club/ ./
+          rm -f foundry-club-completed.zip.b64
+
+      - name: Commit imported codebase
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "Import complete Foundry Club codebase"
+          git push origin main
