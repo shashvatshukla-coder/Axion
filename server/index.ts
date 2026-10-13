@@ -21,11 +21,11 @@ export function createPool() {
 const db = createPool();
 await db.query("SELECT version FROM schema_migrations LIMIT 1");
 
-const server = createApp(db).listen(
-  Number(process.env.PORT || 3001),
-  "0.0.0.0",
-  () => console.log("Foundry API ready"),
-);
+const PORT = Number(process.env.PORT) || 10000;
+
+const server = createApp(db).listen(PORT, "0.0.0.0", () => {
+  console.log(`Foundry API ready on port ${PORT}`);
+});
 
 async function shutdown() {
   server.close(async () => {
