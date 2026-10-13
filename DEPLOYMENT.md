@@ -2,6 +2,8 @@
 
 ## 1. Database
 
+The schema has been applied to Supabase project `axion database` (`ukycghuvhigkpmuqayvf`, Singapore). The `foundry` schema contains 24 tables with RLS enabled. A database write/read test succeeded and was rolled back, leaving no sample data. The runtime `DATABASE_URL` and the initial administrator account still need configuration. The Supabase connection for ChatGPT does not automatically configure the deployed application.
+
 Use your Supabase project's PostgreSQL connection string from its Connect panel. Use a pooler connection suitable for your hosting network; session pooling is suitable for this API. Keep database credentials server-side.
 
 The migration lives in `server/migrations/001_initial.sql`. Apply it through Supabase SQL Editor, or set `DATABASE_URL` locally and run `npm run db:migrate`. It creates the dedicated `foundry` schema, leaving existing `public` tables alone. RLS is enabled on application tables with no browser-access policies; the API connects using the database owner. Do not expose this schema through Supabase Data API.
