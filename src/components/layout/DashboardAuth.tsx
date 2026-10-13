@@ -1,26 +1,57 @@
 import { useState } from "react";
 import type { FormEvent, ReactNode } from "react";
+import { Link } from "react-router-dom";
 import { http, post } from "@/lib/api";
 import { useAsync } from "@/hooks/useAsync";
-export function DashboardAuth({ children }: { children: ReactNode }) {
+export function DashboardAuth({
+  children,
+  signup = false,
+}: {
+  children: ReactNode;
+  signup?: boolean;
+}) {
   const session = useAsync(
-    () => http<{ name: string; role: string }>("/auth/me"),
+    () => http<{ name: string; email: string; role: string }>("/auth/me"),
     [],
   );
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
-  async function login(e: FormEvent) {
+  async function submit(e: FormEvent) {
     e.preventDefault();
-    setBusy(true);
     setError("");
+    if (signup && password !== confirm) {
+      setError("Passwords do not match.");
+      return;
+    }
+    setBusy(true);
     try {
-      await post("/auth/login", { email, password });
+      await post(signup ? "/auth/signup" : "/auth/login", {
+        ...(signup ? { name } : {}),
+        email: email.trim(),
+        password,
+      });
       setPassword("");
+      setConfirm("");
       session.reload();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Unable to sign in");
+    } finally {
+      setBusy(false);
+    }
+  }
+  async function logout() {
+    setBusy(true);
+    setError("");
+    try {
+      await post("/auth/logout", {});
+      session.setData(null);
+      session.reload();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Unable to sign out");
     } finally {
       setBusy(false);
     }
@@ -32,17 +63,76 @@ export function DashboardAuth({ children }: { children: ReactNode }) {
       </div>
     );
   if (session.data?.role === "admin") return <>{children}</>;
+  if (session.data)
+    return (
+      <main className="min-h-screen grid place-items-center bg-bg p-5">
+        <section className="card w-full max-w-md p-6 space-y-4">
+          <h1 className="text-2xl font-semibold">
+            Welcome, {session.data.name}
+          </h1>
+          <p className="text-muted">
+            You are signed in as {session.data.email}.
+          </p>
+          <p>
+            Your member account is ready. You can submit an idea, explore
+            projects, or apply to join the club. Club management requires
+            administrator access.
+          </p>
+          <div className="flex flex-wrap gap-4">
+            <Link to="/incubator" className="text-accent">
+              Submit an idea
+            </Link>
+            <Link to="/join" className="text-accent">
+              Join the club
+            </Link>
+            <Link to="/" className="text-accent">
+              Home
+            </Link>
+          </div>
+          {error && <p role="alert">{error}</p>}
+          <button
+            onClick={logout}
+            disabled={busy}
+            className="rounded bg-accent px-5 py-3 text-white"
+          >
+            {busy ? "Signing out…" : "Sign out"}
+          </button>
+        </section>
+      </main>
+    );
+  const input = "mt-1 w-full rounded border bg-surface p-3";
   return (
     <main className="min-h-screen grid place-items-center bg-bg p-5">
-      <form onSubmit={login} className="card w-full max-w-md p-6 space-y-4">
-        <h1 className="text-2xl font-semibold">Foundry Club sign in</h1>
+      <form onSubmit={submit} className="card w-full max-w-md p-6 space-y-4">
+        <Link to="/" className="text-accent">
+          ← Back to Foundry Club
+        </Link>
+        <h1 className="text-2xl font-semibold">
+          {signup ? "Create your account" : "Foundry Club sign in"}
+        </h1>
         <p className="text-sm text-muted">
-          Sign in with your club administrator account.
+          {signup
+            ? "Join Foundry Club with a member account."
+            : "Sign in with your email and password."}
         </p>
+        {signup && (
+          <label className="block">
+            Name
+            <input
+              className={input}
+              autoComplete="name"
+              minLength={2}
+              maxLength={100}
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </label>
+        )}
         <label className="block">
           Email
           <input
-            className="mt-1 w-full rounded border bg-surface p-3"
+            className={input}
             type="email"
             autoComplete="username"
             required
@@ -53,23 +143,53 @@ export function DashboardAuth({ children }: { children: ReactNode }) {
         <label className="block">
           Password
           <input
-            className="mt-1 w-full rounded border bg-surface p-3"
+            className={input}
             type="password"
-            autoComplete="current-password"
+            autoComplete={signup ? "new-password" : "current-password"}
+            minLength={signup ? 12 : 1}
+            maxLength={200}
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
         </label>
-        {(error || session.data) && (
-          <p role="alert">{error || "Administrator access required."}</p>
+        {signup && (
+          <>
+            <p className="text-sm text-muted">Use at least 12 characters.</p>
+            <label className="block">
+              Confirm password
+              <input
+                className={input}
+                type="password"
+                autoComplete="new-password"
+                required
+                value={confirm}
+                onChange={(e) => setConfirm(e.target.value)}
+              />
+            </label>
+          </>
         )}
+        {error && <p role="alert">{error}</p>}
         <button
-          className="rounded bg-accent px-5 py-3 text-white"
+          className="w-full rounded bg-accent px-5 py-3 text-white"
           disabled={busy}
         >
-          {busy ? "Signing in…" : "Sign in"}
+          {busy ? "Please wait…" : signup ? "Create account" : "Sign in"}
         </button>
+        <p>
+          {signup ? "Already have an account? " : "New to Foundry Club? "}
+          <Link
+            className="text-accent"
+            to={signup ? "/login" : "/signup"}
+            onClick={() => {
+              setError("");
+              setPassword("");
+              setConfirm("");
+            }}
+          >
+            {signup ? "Sign in" : "Sign up"}
+          </Link>
+        </p>
       </form>
     </main>
   );

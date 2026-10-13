@@ -153,7 +153,7 @@ export const schemas: Record<string, z.ZodObject<any>> = {
 };
 export const form = z.record(z.string().max(100), z.string().max(8000));
 export const loginSchema = z.object({
-  email: z.email(),
+  email: z.string().trim().toLowerCase().pipe(z.email()),
   password: z.string().min(1).max(200),
 });
 export const profileSchema = z.object({
@@ -161,3 +161,11 @@ export const profileSchema = z.object({
   email: z.email(),
   preferences: z.record(z.string(), z.boolean()),
 });
+
+export const signupSchema = z
+  .object({
+    name: z.string().trim().min(2).max(100),
+    email: z.string().trim().toLowerCase().pipe(z.email()),
+    password: z.string().min(12).max(200),
+  })
+  .strict();

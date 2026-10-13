@@ -204,3 +204,47 @@ test("disk-backed PostgreSQL records survive database close and reopen", async (
     await rm(path, { recursive: true, force: true });
   }
 });
+
+test("signup creates only members, persists login, rejects duplicates and revokes logout", async () => {
+  const { db, app } = await fixture();
+  const user = request.agent(app);
+  const body = {
+    name: "New Member",
+    email: " New.Member@club.test ",
+    password: "a-new-member-password",
+  };
+  await user
+    .post("/api/auth/signup")
+    .send({ ...body, password: "short" })
+    .expect(400);
+  await user
+    .post("/api/auth/signup")
+    .send({ ...body, role: "admin" })
+    .expect(400);
+  const signedUp = await user.post("/api/auth/signup").send(body).expect(201);
+  assert.equal(signedUp.body.role, "member");
+  assert.equal(signedUp.body.email, "new.member@club.test");
+  assert.equal(signedUp.body.password_hash, undefined);
+  assert.match(signedUp.headers["set-cookie"][0], /HttpOnly/);
+  await user.get("/api/auth/me").expect(200);
+  await user.get("/api/clients").expect(403);
+  await request(app).post("/api/auth/signup").send(body).expect(409);
+  const stored = (
+    await db.query("SELECT password_hash FROM users WHERE email=$1", [
+      "new.member@club.test",
+    ])
+  ).rows[0];
+  assert.notEqual(stored.password_hash, body.password);
+  await user.post("/api/auth/logout").send({}).expect(200);
+  await user.get("/api/auth/me").expect(401);
+  const restarted = request.agent(createApp(db));
+  await restarted
+    .post("/api/auth/login")
+    .send({ email: body.email, password: "wrong" })
+    .expect(401);
+  await restarted
+    .post("/api/auth/login")
+    .send({ email: body.email, password: body.password })
+    .expect(200);
+  await restarted.get("/api/auth/me").expect(200);
+});

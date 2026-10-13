@@ -8,7 +8,13 @@ import { randomBytes, randomUUID } from "node:crypto";
 import { z } from "zod";
 import { resources, type Database, type Resource } from "./db";
 import { hashPassword, verifyPassword, tokenHash } from "./auth";
-import { schemas, form, loginSchema, profileSchema } from "./schemas";
+import {
+  schemas,
+  form,
+  loginSchema,
+  profileSchema,
+  signupSchema,
+} from "./schemas";
 import { analytics } from "./analytics";
 const id = () => randomUUID();
 const today = () => new Date().toISOString().slice(0, 10);
@@ -67,17 +73,10 @@ export function createApp(db: Database) {
     await db.query("SELECT 1");
     res.json({ status: "ok", database: "connected" });
   });
-  app.post("/api/auth/login", publicLimiter, async (req, res) => {
-    const { email, password } = loginSchema.parse(req.body);
-    const user = (
-      await db.query("SELECT * FROM users WHERE email=$1", [
-        email.toLowerCase(),
-      ])
-    ).rows[0];
-    if (!user || !verifyPassword(password, user.password_hash)) {
-      res.status(401).json({ error: "Invalid email or password" });
-      return;
-    }
+  const startSession = async (
+    user: { id: string; name: string; email: string; role: string },
+    res: express.Response,
+  ) => {
     const token = randomBytes(32).toString("hex");
     await db.query("DELETE FROM sessions WHERE expires_at < now()");
     await db.query(
@@ -98,6 +97,36 @@ export function createApp(db: Database) {
         email: user.email,
         role: user.role,
       });
+  };
+  app.post("/api/auth/signup", publicLimiter, async (req, res) => {
+    const { name, email, password } = signupSchema.parse(req.body);
+    const result = await db.query(
+      "INSERT INTO users(id,email,name,password_hash,role) VALUES($1,$2,$3,$4,'member') ON CONFLICT(email) DO NOTHING RETURNING id,email,name,role",
+      [id(), email, name, hashPassword(password)],
+    );
+    if (!result.rows[0]) {
+      res
+        .status(409)
+        .json({
+          error: "An account with this email already exists. Please sign in.",
+        });
+      return;
+    }
+    res.status(201);
+    await startSession(result.rows[0], res);
+  });
+  app.post("/api/auth/login", publicLimiter, async (req, res) => {
+    const { email, password } = loginSchema.parse(req.body);
+    const user = (
+      await db.query("SELECT * FROM users WHERE email=$1", [
+        email.toLowerCase(),
+      ])
+    ).rows[0];
+    if (!user || !verifyPassword(password, user.password_hash)) {
+      res.status(401).json({ error: "Invalid email or password" });
+      return;
+    }
+    await startSession(user, res);
   });
   app.post("/api/auth/logout", async (req, res) => {
     await db.query("DELETE FROM sessions WHERE token_hash=$1", [

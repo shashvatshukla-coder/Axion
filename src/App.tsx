@@ -1,6 +1,6 @@
 import { DashboardAuth } from "@/components/layout/DashboardAuth";
 import { lazy, Suspense } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { ScrollToTop } from "@/components/layout/ScrollToTop";
 import PublicLayout from "@/components/layout/PublicLayout";
 import DashboardLayout from "@/components/layout/DashboardLayout";
@@ -53,6 +53,22 @@ export default function App() {
       <ScrollToTop />
       <Suspense fallback={<PageLoading />}>
         <Routes>
+          <Route
+            path="login"
+            element={
+              <DashboardAuth>
+                <Navigate to="/dashboard" replace />
+              </DashboardAuth>
+            }
+          />
+          <Route
+            path="signup"
+            element={
+              <DashboardAuth signup>
+                <Navigate to="/dashboard" replace />
+              </DashboardAuth>
+            }
+          />
           <Route element={<PublicLayout />}>
             <Route index element={<Home />} />
             <Route path="about" element={<About />} />

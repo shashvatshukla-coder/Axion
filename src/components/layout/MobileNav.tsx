@@ -1,17 +1,23 @@
-import { useEffect } from 'react';
-import { createPortal } from 'react-dom';
-import { NavLink, useLocation } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
-import { LayoutDashboard, Search, X } from 'lucide-react';
-import { ALL_PUBLIC_LINKS } from '@/data/site';
-import { useEscape, useLockBodyScroll } from '@/hooks/useOverlay';
-import { useCommandPalette } from '@/components/common/SearchCommand';
-import { ButtonLink } from '@/components/common/Button';
-import { Logo } from '@/components/common/Logo';
-import { ThemeToggle } from '@/components/common/ThemeToggle';
-import { cn } from '@/lib/utils';
+import { useEffect } from "react";
+import { createPortal } from "react-dom";
+import { NavLink, useLocation } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
+import { LayoutDashboard, Search, X } from "lucide-react";
+import { ALL_PUBLIC_LINKS } from "@/data/site";
+import { useEscape, useLockBodyScroll } from "@/hooks/useOverlay";
+import { useCommandPalette } from "@/components/common/SearchCommand";
+import { ButtonLink } from "@/components/common/Button";
+import { Logo } from "@/components/common/Logo";
+import { ThemeToggle } from "@/components/common/ThemeToggle";
+import { cn } from "@/lib/utils";
 
-export function MobileNav({ open, onClose }: { open: boolean; onClose: () => void }) {
+export function MobileNav({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) {
   const { pathname } = useLocation();
   const palette = useCommandPalette();
   useLockBodyScroll(open);
@@ -55,11 +61,13 @@ export function MobileNav({ open, onClose }: { open: boolean; onClose: () => voi
                 <li key={l.to}>
                   <NavLink
                     to={l.to}
-                    end={l.to === '/'}
+                    end={l.to === "/"}
                     className={({ isActive }) =>
                       cn(
-                        'block rounded-xl px-4 py-3 text-2xl font-semibold tracking-tight transition-colors',
-                        isActive ? 'bg-surface2 text-accent' : 'text-fg hover:bg-surface2',
+                        "block rounded-xl px-4 py-3 text-2xl font-semibold tracking-tight transition-colors",
+                        isActive
+                          ? "bg-surface2 text-accent"
+                          : "text-fg hover:bg-surface2",
                       )
                     }
                   >
@@ -80,8 +88,8 @@ export function MobileNav({ open, onClose }: { open: boolean; onClose: () => voi
             >
               <Search className="h-4 w-4" aria-hidden /> Search
             </button>
-            <ButtonLink to="/dashboard" variant="secondary" size="lg">
-              <LayoutDashboard className="h-4 w-4" aria-hidden /> Open dashboard
+            <ButtonLink to="/login" variant="secondary" size="lg">
+              <LayoutDashboard className="h-4 w-4" aria-hidden /> Sign in
             </ButtonLink>
             <ButtonLink to="/join" size="lg">
               Join the club
