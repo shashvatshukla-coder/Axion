@@ -5,5 +5,5 @@ RUN npm ci
 COPY . .
 RUN npm run build && npm run typecheck:api
 ENV NODE_ENV=production
-EXPOSE 3001
+EXPOSE 10000
 CMD ["npm", "start"]
