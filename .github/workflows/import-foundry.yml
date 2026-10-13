@@ -19,7 +19,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          cat foundry-club-completed.zip.b64.part.* > /tmp/foundry-club.b64
+          cat foundry-upload.part.* > /tmp/foundry-club.b64
           base64 -d /tmp/foundry-club.b64 > /tmp/foundry-club.zip
           rm -rf /tmp/foundry-import
           mkdir -p /tmp/foundry-import
@@ -27,9 +27,11 @@ jobs:
           rsync -a --delete \
             --exclude='.git' \
             --exclude='.github' \
+            --exclude='foundry-upload.part.*' \
             --exclude='foundry-club-completed.zip.b64.part.*' \
+            --exclude='.import-trigger' \
             /tmp/foundry-import/foundry-club/ ./
-          rm -f foundry-club-completed.zip.b64.part.*
+          rm -f foundry-upload.part.* foundry-club-completed.zip.b64.part.* .import-trigger
 
       - name: Commit imported codebase
         shell: bash
