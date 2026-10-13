@@ -47,8 +47,10 @@ export function createApp(db: Database) {
       !["GET", "HEAD", "OPTIONS"].includes(req.method) &&
       req.headers.origin
     ) {
-      const allowed = process.env.APP_ORIGIN || "http://localhost:5173";
-      if (req.headers.origin !== allowed) {
+      const allowed = (process.env.APP_ORIGIN || "http://localhost:5173")
+        .split(",")
+        .map((origin) => origin.trim());
+      if (!allowed.includes(req.headers.origin)) {
         res.status(403).json({ error: "Origin not allowed" });
         return;
       }

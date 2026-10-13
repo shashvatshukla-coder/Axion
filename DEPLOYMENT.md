@@ -16,17 +16,17 @@ Set `DATABASE_URL`, `DATABASE_SSL=true`, `ADMIN_EMAIL`, and `ADMIN_PASSWORD` loc
 
 ## 3. Vercel (existing Vite project)
 
-The API is included at `api/index.ts`. `vercel.json` routes `/api/*` to Express and remaining routes to the React app. Configure:
+`vercel.json` proxies `/api/*` to `https://axion-h1ne.onrender.com/api/*` and remaining routes to the React app. Render owns the API and database connection; Vercel hosts the frontend. Configure:
 
 - Framework: Vite
 - Build command: `npm run build`
 - Output directory: `dist`
 - Install command: `npm ci`
 - Node.js: 22 or later
-- Server variables: `DATABASE_URL`, `DATABASE_SSL=true`, `NODE_ENV=production`, `APP_ORIGIN=https://your-exact-site-domain`
+- Server variables on Render: `DATABASE_URL`, `DATABASE_SSL=true`, `NODE_ENV=production`, `APP_ORIGIN=https://foundry-club-preview.vercel.app,https://axion-h1ne.onrender.com`
 - Frontend: leave `VITE_API_URL` unset, or set it to `/api`.
 
-Apply the schema and create the administrator **before** deploying. Do not put `DATABASE_URL`, an administrator password, or a Supabase service role key into a `VITE_*` variable. Set an exact `APP_ORIGIN` for each environment. Login uses same-origin HttpOnly cookies; cross-origin API deployments need a same-origin reverse proxy.
+Apply the schema and create the administrator **before** deploying. Do not put `DATABASE_URL`, an administrator password, or a Supabase service role key into a `VITE_*` variable. `APP_ORIGIN` accepts a comma-separated list of exact trusted origins. Login uses same-origin HttpOnly cookies through the Vercel proxy. Keep `VITE_API_URL=/api`; pointing it directly at Render bypasses this proxy and breaks browser requests.
 
 After deployment, verify `/api/health`, administrator login, public form submission, task movement, page refresh, and report download. No deployment is verified merely by committing this code.
 
