@@ -21,7 +21,10 @@ jobs:
         run: |
           set -euo pipefail
           cat .axion-import/xz* > /tmp/foundry.b64
+          test "$(wc -c < /tmp/foundry.b64)" -eq 83504
           base64 -d /tmp/foundry.b64 > /tmp/foundry.tar.xz
+          test "$(wc -c < /tmp/foundry.tar.xz)" -eq 62628
+          echo "2cbcdf9a0aee33bdb71f40288a7293045da42eacf597fc737d011d3f648eaba0  /tmp/foundry.tar.xz" | sha256sum -c -
           mkdir -p /tmp/foundry
           tar -xJf /tmp/foundry.tar.xz -C /tmp/foundry
           cp -a /tmp/foundry/. .
