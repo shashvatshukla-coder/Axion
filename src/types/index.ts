@@ -1,9 +1,18 @@
 export type Division = 'Incubator' | 'Agency';
 export type ProjectStatus = 'Active' | 'Completed' | 'Paused';
-
-export type StageKey = 'problem' | 'validation' | 'ideation' | 'mvp' | 'pmf' | 'traction' | 'scale';
-export type ValidationStatus = 'Pending' | 'In review' | 'Validated' | 'Rejected';
-
+export type StageKey =
+  | 'problem'
+  | 'validation'
+  | 'ideation'
+  | 'mvp'
+  | 'pmf'
+  | 'traction'
+  | 'scale';
+export type ValidationStatus =
+  | 'Pending'
+  | 'In review'
+  | 'Validated'
+  | 'Rejected';
 export type TeamName =
   | 'Core Team'
   | 'Incubator Team'
@@ -14,7 +23,6 @@ export type TeamName =
   | 'Outreach Team'
   | 'QA Team'
   | 'Finance Team';
-
 export type Department = 'Incubator' | 'Agency' | 'Shared';
 
 export interface Project {
@@ -69,6 +77,7 @@ export interface Idea {
   stage: StageKey;
   team: string[];
   date: string;
+  submission?: FormValues;
 }
 
 export type LeadStage =
@@ -164,3 +173,20 @@ export interface AppNotification {
 }
 
 export type FormValues = Record<string, string>;
+
+export interface ClubApplication {
+  id: string;
+  kind: string;
+  values: {
+    name?: string;
+    email?: string;
+    branchYear?: string;
+    skills?: string;
+    link?: string;
+    why?: string;
+    availability?: string;
+    [key: string]: string | undefined;
+  };
+  created_at?: string;
+  date?: string;
+}
