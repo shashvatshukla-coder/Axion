@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { Menu, Search } from "lucide-react";
+import { Inbox, Menu, Search } from "lucide-react";
 import { PUBLIC_LINKS } from "@/data/site";
 import { Logo } from "@/components/common/Logo";
 import { ThemeToggle } from "@/components/common/ThemeToggle";
@@ -62,6 +62,15 @@ export function Navbar() {
               <Search className="h-4 w-4" />
             </button>
             <ThemeToggle />
+            <ButtonLink
+              to="/dashboard/submissions"
+              variant="secondary"
+              size="sm"
+              className="inline-flex items-center gap-1.5 border-accent/40 bg-accent/10 text-accent hover:bg-accent/20 font-medium text-xs rounded-xl"
+            >
+              <Inbox className="h-3.5 w-3.5" />
+              <span>Admin Submissions</span>
+            </ButtonLink>
             <ButtonLink
               to="/login"
               variant="ghost"
