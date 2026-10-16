@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { createPortal } from "react-dom";
 import { NavLink, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import { LayoutDashboard, Search, X } from "lucide-react";
+import { Inbox, LayoutDashboard, Search, X } from "lucide-react";
 import { ALL_PUBLIC_LINKS } from "@/data/site";
 import { useEscape, useLockBodyScroll } from "@/hooks/useOverlay";
 import { useCommandPalette } from "@/components/common/SearchCommand";
@@ -88,6 +88,14 @@ export function MobileNav({
             >
               <Search className="h-4 w-4" aria-hidden /> Search
             </button>
+            <ButtonLink
+              to="/dashboard/submissions"
+              variant="secondary"
+              size="lg"
+              className="border-accent/40 bg-accent/10 text-accent font-semibold"
+            >
+              <Inbox className="h-4 w-4" aria-hidden /> Admin Submissions Hub
+            </ButtonLink>
             <ButtonLink to="/login" variant="secondary" size="lg">
               <LayoutDashboard className="h-4 w-4" aria-hidden /> Sign in
             </ButtonLink>
