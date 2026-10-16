@@ -5,6 +5,7 @@ import {
   FileText,
   FlaskConical,
   Handshake,
+  Inbox,
   Layers,
   LayoutDashboard,
   Lightbulb,
@@ -34,7 +35,10 @@ export interface DashNavGroup {
 
 export const dashboardNav: DashNavGroup[] = [
   {
-    items: [{ label: 'Overview', to: '/dashboard', icon: LayoutDashboard, end: true }],
+    items: [
+      { label: 'Overview', to: '/dashboard', icon: LayoutDashboard, end: true },
+      { label: 'Submissions', to: '/dashboard/submissions', icon: Inbox },
+    ],
   },
   {
     label: 'Incubator',
