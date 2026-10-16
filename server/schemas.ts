@@ -1,10 +1,12 @@
 import { z } from "zod";
+
 const text = z.string().trim().min(1).max(4000);
 const short = z.string().trim().min(1).max(200);
 const names = z.array(short).max(100);
 const amount = z.number().finite().nonnegative();
 const date = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 const progress = z.number().min(0).max(100);
+
 export const stages = [
   "problem",
   "validation",
@@ -14,6 +16,7 @@ export const stages = [
   "traction",
   "scale",
 ] as const;
+
 export const leadStages = [
   "New Lead",
   "Contacted",
@@ -25,6 +28,9 @@ export const leadStages = [
   "Delivered",
   "Closed",
 ] as const;
+
+export const form = z.record(z.string().max(100), z.string().max(8000));
+
 export const schemas: Record<string, z.ZodObject<any>> = {
   ideas: z.object({
     title: short,
@@ -36,6 +42,10 @@ export const schemas: Record<string, z.ZodObject<any>> = {
     team: names,
     date,
     submission: z.record(z.string(), z.string().max(8000)).optional(),
+  }),
+  applications: z.object({
+    kind: short,
+    values: form,
   }),
   projects: z.object({
     name: short,
@@ -74,7 +84,7 @@ export const schemas: Record<string, z.ZodObject<any>> = {
     name: short,
     organization: short,
     industry: short,
-    email: z.email(),
+    email: z.string().email(),
     projects: z.number().int().nonnegative(),
     revenue: amount,
     satisfaction: z.number().min(0).max(5),
@@ -151,21 +161,22 @@ export const schemas: Record<string, z.ZodObject<any>> = {
     description: text,
   }),
 };
-export const form = z.record(z.string().max(100), z.string().max(8000));
+
 export const loginSchema = z.object({
-  email: z.string().trim().toLowerCase().pipe(z.email()),
+  email: z.string().trim().toLowerCase().pipe(z.string().email()),
   password: z.string().min(1).max(200),
 });
+
 export const profileSchema = z.object({
   name: short,
-  email: z.email(),
+  email: z.string().email(),
   preferences: z.record(z.string(), z.boolean()),
 });
 
 export const signupSchema = z
   .object({
     name: z.string().trim().min(2).max(100),
-    email: z.string().trim().toLowerCase().pipe(z.email()),
+    email: z.string().trim().toLowerCase().pipe(z.string().email()),
     password: z.string().min(12).max(200),
   })
   .strict();
