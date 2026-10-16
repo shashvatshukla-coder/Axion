@@ -23,7 +23,7 @@ import type { Idea, ClubApplication } from '@/types';
 import { Drawer } from '@/components/common/Drawer';
 import { Button } from '@/components/common/Button';
 import { Tabs } from '@/components/common/Tabs';
-import { formatDate } from '@/lib/formatters';
+import { formatDate } from '@/lib/utils';
 
 type TabKey = 'ideas' | 'applications';
 
