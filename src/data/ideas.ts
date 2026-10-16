@@ -12,5 +12,6 @@ export const ideas: Idea[] = [
   { id: 'IDEA-184', title: 'Warehouse pick-list optimiser', submittedBy: 'Imran Siddiqui', problem: 'Pickers walk the same aisles repeatedly because lists are unordered.', category: 'Logistics', validation: 'Validated', stage: 'traction', team: ['Neel Shah', 'Tanvi Joshi'], date: '2026-07-19' },
   { id: 'IDEA-178', title: 'Event volunteer rostering', submittedBy: 'Tara Menon', problem: 'Organisers manage volunteers in spreadsheets and chat threads.', category: 'Campus', validation: 'Validated', stage: 'scale', team: ['Kabir Nair'], date: '2026-06-30' },
   { id: 'IDEA-171', title: 'Bike-share for campus and nearby hostels', submittedBy: 'Gautam Rao', problem: 'The walk between hostels and academic blocks takes twenty minutes.', category: 'Mobility', validation: 'Rejected', stage: 'validation', team: [], date: '2026-06-12' },
-  { id: 'IDEA-166', title: 'Voice-note based shop ledger', submittedBy: 'Madhuri Das', problem: 'Shopkeepers who cannot type fast skip recording credit sales.', category: 'FinTech', validation: 'In review', stage: 'ideation', team: ['Rohan Das'], date: '2026-05-27' },
 ];
+
+export const INITIAL_IDEAS = ideas;
