@@ -17,6 +17,7 @@ import Join from "@/pages/public/Join";
 import NotFound from "@/pages/public/NotFound";
 
 const Overview = lazy(() => import("@/pages/dashboard/Overview"));
+const Submissions = lazy(() => import("@/pages/dashboard/Submissions"));
 const Ideas = lazy(() => import("@/pages/dashboard/Ideas"));
 const Validation = lazy(() => import("@/pages/dashboard/Validation"));
 const Mvps = lazy(() => import("@/pages/dashboard/Mvps"));
@@ -91,6 +92,7 @@ export default function App() {
             }
           >
             <Route index element={<Overview />} />
+            <Route path="submissions" element={<Submissions />} />
             <Route path="incubator/ideas" element={<Ideas />} />
             <Route path="incubator/validation" element={<Validation />} />
             <Route path="incubator/mvps" element={<Mvps />} />
